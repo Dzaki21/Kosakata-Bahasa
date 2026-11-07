@@ -110,3 +110,4 @@ export const RatingButtons: React.FC<RatingButtonsProps> = ({
     </div>
   );
 };
+

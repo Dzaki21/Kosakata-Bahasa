@@ -83,3 +83,4 @@ export interface AppSettings {
   showArticleHints: boolean;
   updatedAt: string;
 }
+

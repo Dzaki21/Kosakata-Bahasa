@@ -95,3 +95,4 @@ export function useVocabularies(options: VocabFilterOptions = {}) {
     deleteVocabulary,
   };
 }
+

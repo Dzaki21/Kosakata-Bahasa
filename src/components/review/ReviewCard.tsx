@@ -197,7 +197,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
                       ? 'Ketik arti dalam bahasa Indonesia...'
                       : 'Ketik kosakata Jerman (contoh: das Haus / Haus)...'
                   }
-                  className="w-full text-center text-lg sm:text-xl font-semibold py-3.5 px-4 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-slate-400 placeholder:text-sm placeholder:font-normal"
+                  className="w-full text-center text-lg sm:text-xl font-bold py-3.5 px-4 rounded-2xl border-2 border-slate-300 dark:border-slate-500 bg-white dark:bg-white text-slate-950 dark:text-slate-950 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 transition-all placeholder:text-slate-400 placeholder:text-sm placeholder:font-normal shadow-sm"
                 />
               </div>
 
@@ -298,3 +298,4 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
     </div>
   );
 };
+

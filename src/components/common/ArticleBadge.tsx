@@ -36,3 +36,4 @@ export const ArticleBadge: React.FC<ArticleBadgeProps> = ({
     </span>
   );
 };
+

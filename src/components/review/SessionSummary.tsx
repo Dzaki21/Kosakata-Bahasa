@@ -150,3 +150,4 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
     </div>
   );
 };
+

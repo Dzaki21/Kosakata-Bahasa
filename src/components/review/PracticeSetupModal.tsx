@@ -205,3 +205,4 @@ export const PracticeSetupModal: React.FC<PracticeSetupModalProps> = ({
     </Modal>
   );
 };
+

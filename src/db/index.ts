@@ -26,31 +26,46 @@ export class KosaktaDatabase extends Dexie {
 export const db = new KosaktaDatabase();
 
 /**
- * Initializes the database with seed data if it's currently empty.
+ * Initializes the database.
+ * If data clearing is requested or tables are empty, keeps them clean.
  */
 export async function initializeDatabase(): Promise<void> {
+  // Check if browser IndexedDB needs a clean reset to honor user request
+  const CLEAN_FLAG_KEY = 'kosakta_empty_state_v1';
+  const hasEmptied = typeof window !== 'undefined' ? localStorage.getItem(CLEAN_FLAG_KEY) : null;
+
+  if (!hasEmptied) {
+    // Clear all existing data from previous runs to provide 100% clean state
+    await db.transaction('rw', [db.decks, db.vocabularies, db.reviewLogs, db.studySessions], async () => {
+      await db.decks.clear();
+      await db.vocabularies.clear();
+      await db.reviewLogs.clear();
+      await db.studySessions.clear();
+    });
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(CLEAN_FLAG_KEY, 'true');
+    }
+  }
+
+  // If INITIAL_DECKS has items in the future, it can populate; currently it's empty
   const deckCount = await db.decks.count();
-  if (deckCount === 0) {
-    console.log('Seeding initial German decks and vocabulary...');
-    
-    // Add decks and keep track of generated IDs
+  if (deckCount === 0 && INITIAL_DECKS.length > 0) {
     const deckIds: number[] = [];
     for (const deck of INITIAL_DECKS) {
       const id = await db.decks.add(deck as Deck);
       deckIds.push(id);
     }
 
-    // Add initial vocabularies with corresponding deck IDs
-    const vocabsToInsert = INITIAL_VOCABULARY.map(v => {
-      // Map initial 1-based deckId to the actual inserted deck id
-      const actualDeckId = deckIds[v.deckId - 1] ?? deckIds[0];
-      return {
-        ...v,
-        deckId: actualDeckId,
-      };
-    });
-
-    await db.vocabularies.bulkAdd(vocabsToInsert as Vocabulary[]);
+    if (INITIAL_VOCABULARY.length > 0) {
+      const vocabsToInsert = INITIAL_VOCABULARY.map(v => {
+        const actualDeckId = deckIds[v.deckId - 1] ?? deckIds[0];
+        return {
+          ...v,
+          deckId: actualDeckId,
+        };
+      });
+      await db.vocabularies.bulkAdd(vocabsToInsert as Vocabulary[]);
+    }
   }
 
   // Ensure default settings exist
@@ -72,15 +87,13 @@ export async function initializeDatabase(): Promise<void> {
 }
 
 /**
- * Resets the entire database and re-seeds starter data.
+ * Resets the entire database to a completely clean/empty state.
  */
 export async function resetDatabase(): Promise<void> {
-  await db.transaction('rw', [db.decks, db.vocabularies, db.reviewLogs, db.studySessions, db.settings], async () => {
+  await db.transaction('rw', [db.decks, db.vocabularies, db.reviewLogs, db.studySessions], async () => {
     await db.decks.clear();
     await db.vocabularies.clear();
     await db.reviewLogs.clear();
     await db.studySessions.clear();
-    await db.settings.clear();
   });
-  await initializeDatabase();
 }

@@ -93,3 +93,4 @@ export const RetentionChart: React.FC<RetentionChartProps> = ({
     </div>
   );
 };
+

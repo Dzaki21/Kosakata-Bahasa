@@ -162,3 +162,4 @@ Perintah ini akan menjalankan pemeriksaan tipe TypeScript (`tsc`) dan melakukan 
 npm run preview
 ```
 Buka browser pada alamat `http://localhost:4173`.
+

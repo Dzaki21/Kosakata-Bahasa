@@ -12,3 +12,4 @@ export function fireCelebrationConfetti(): void {
     // Graceful fallback if canvas is not supported
   }
 }
+

@@ -149,3 +149,4 @@ export const DeckCard: React.FC<DeckCardProps> = ({
     </div>
   );
 };
+

@@ -27,3 +27,4 @@ export const GermanSpecialChars: React.FC<GermanSpecialCharsProps> = ({ onInsert
     </div>
   );
 };
+

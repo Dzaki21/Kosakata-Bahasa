@@ -77,3 +77,4 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     await get().updateSettings({ theme });
   },
 }));
+

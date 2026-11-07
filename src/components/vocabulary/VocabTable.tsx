@@ -313,3 +313,4 @@ export const VocabTable: React.FC<VocabTableProps> = ({
     </div>
   );
 };
+

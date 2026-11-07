@@ -22,3 +22,4 @@ export function speakGerman(text: string): void {
 
   window.speechSynthesis.speak(utterance);
 }
+
