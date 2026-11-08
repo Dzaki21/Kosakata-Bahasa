@@ -12,93 +12,94 @@ export interface SrsCalculationResult {
 }
 
 /**
- * Calculates next review parameters using an optimized SM-2 Spaced Repetition Algorithm.
+ * Calculates next review parameters with human-friendly, responsive intervals:
  * 
- * Ratings:
- * 1 = Again: Forgot the card, reset streak, review again soon
- * 2 = Hard: Remembered with significant difficulty, small interval bump
- * 3 = Good: Standard correct recall, interval grows by ease factor
- * 4 = Easy: Effortless recall, bonus interval multiplier and higher ease factor
+ * 1 (Again) -> Ditampilkan lagi saat itu juga (re-queue di sesi ini), interval = 0, due sekarang.
+ * 2 (Hard)  -> Ditampilkan langsung setelah sesi ini selesai (due sekarang / < 1 hari).
+ * 3 (Good)  -> 1 hari (besok).
+ * 4 (Easy)  -> 2 hari (lusa).
  */
 export function calculateNextReview(vocab: Vocabulary, rating: Rating, now: Date = new Date()): SrsCalculationResult {
   let repetitions = vocab.repetitions ?? 0;
-  let interval = vocab.interval ?? 0;
-  let easeFactor = vocab.easeFactor ?? 2.5;
   let lapses = vocab.lapses ?? 0;
   let correctStreak = vocab.correctStreak ?? 0;
   let totalReviews = (vocab.totalReviews ?? 0) + 1;
+  let easeFactor = vocab.easeFactor ?? 2.5;
+
+  let interval = 0; // in days
+  let dueDateObj: Date;
 
   if (rating === 1) {
-    // Again
+    // Again: Muncul lagi saat itu juga (sesi ini)
     repetitions = 0;
-    interval = 1; // Due tomorrow
+    interval = 0;
     lapses += 1;
     correctStreak = 0;
-    // Lower ease factor, minimum 1.3
     easeFactor = Math.max(1.3, easeFactor - 0.2);
+    // Jatuh tempo detik ini juga
+    dueDateObj = new Date(now.getTime());
   } else if (rating === 2) {
-    // Hard
-    correctStreak += 1;
-    if (repetitions === 0) {
-      interval = 1;
-      repetitions = 1;
-    } else {
-      interval = Math.max(1, Math.round(interval * 1.2));
-      repetitions += 1;
-    }
-    // Slight penalty to ease factor
-    easeFactor = Math.max(1.3, easeFactor - 0.15);
+    // Hard: Muncul langsung setelah sesi latihan ini selesai
+    repetitions = 0; // tetap dalam mode pembelajaran intensif
+    interval = 0;
+    lapses += 1;
+    correctStreak = 0;
+    easeFactor = Math.max(1.3, easeFactor - 0.1);
+    // Jatuh tempo langsung sekarang (siap saat sesi ini selesai)
+    dueDateObj = new Date(now.getTime());
   } else if (rating === 3) {
-    // Good
+    // Good: 1 hari untuk review awal, lalu meningkat bertahap teratur
     correctStreak += 1;
-    if (repetitions === 0) {
-      interval = 1;
-      repetitions = 1;
-    } else if (repetitions === 1) {
+    repetitions += 1;
+
+    if (repetitions <= 1) {
+      interval = 1; // 1 hari persis sesuai permintaan
+    } else if (repetitions === 2) {
       interval = 3;
-      repetitions = 2;
-    } else {
-      interval = Math.max(1, Math.round(interval * easeFactor));
-      repetitions += 1;
-    }
-    // Ease factor remains stable or slightly adjusts
-    // SM-2: EF' = EF + (0.1 - (5-4)*(0.08 + (5-4)*0.02)) = EF + 0
-  } else if (rating === 4) {
-    // Easy
-    correctStreak += 1;
-    if (repetitions === 0) {
-      interval = 4;
-      repetitions = 1;
-    } else if (repetitions === 1) {
+    } else if (repetitions === 3) {
+      interval = 5;
+    } else if (repetitions === 4) {
       interval = 7;
-      repetitions = 2;
     } else {
-      interval = Math.max(1, Math.round(interval * easeFactor * 1.35));
-      repetitions += 1;
+      interval = Math.min(21, 7 + (repetitions - 4) * 3);
     }
-    // Increase ease factor, capped at 3.0
-    easeFactor = Math.min(3.0, easeFactor + 0.15);
+
+    dueDateObj = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+  } else if (rating === 4) {
+    // Easy: 2 hari untuk review awal, lalu meningkat bertahap teratur
+    correctStreak += 1;
+    repetitions += 1;
+
+    if (repetitions <= 1) {
+      interval = 2; // 2 hari persis sesuai permintaan
+    } else if (repetitions === 2) {
+      interval = 4;
+    } else if (repetitions === 3) {
+      interval = 7;
+    } else {
+      interval = Math.min(28, 7 + (repetitions - 3) * 5);
+    }
+
+    dueDateObj = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+  } else {
+    dueDateObj = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   }
 
-  // Calculate new status
+  // Status perhitungan
   let status: ReviewStatus = 'learning';
-  if (interval >= 21 || repetitions >= 5) {
+  if (interval >= 14 || repetitions >= 4) {
     status = 'mastered';
-  } else if (repetitions >= 2) {
+  } else if (repetitions >= 2 && interval >= 1) {
     status = 'review';
   } else {
     status = 'learning';
   }
 
-  // Calculate due date (current time + interval days)
-  const dueDateObj = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
-  const dueDate = dueDateObj.toISOString();
-
   return {
     repetitions,
     interval,
     easeFactor: Number(easeFactor.toFixed(2)),
-    dueDate,
+    dueDate: dueDateObj.toISOString(),
     status,
     lapses,
     correctStreak,
@@ -116,24 +117,26 @@ export function isVocabDue(vocab: Vocabulary, now: Date = new Date()): boolean {
 }
 
 /**
- * Formats due date in a friendly human-readable format (e.g. "Today", "Tomorrow", "In 3 days", "Overdue by 2 days").
+ * Formats due date in friendly Indonesian human-readable format.
  */
 export function formatDueTime(dueDateStr: string, now: Date = new Date()): string {
-  if (!dueDateStr) return 'Ready';
+  if (!dueDateStr) return 'Siap review';
   const due = new Date(dueDateStr);
   const diffMs = due.getTime() - now.getTime();
+  const diffHours = Math.round(diffMs / (1000 * 60 * 60));
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays < 0) {
-    const overdue = Math.abs(diffDays);
-    return overdue === 1 ? '1 day overdue' : `${overdue} days overdue`;
+  if (diffMs <= 0) {
+    return 'Jatuh tempo sekarang';
   }
-  if (diffDays === 0) {
-    return 'Due today';
+  if (diffHours < 24) {
+    return diffHours <= 1 ? 'Dalam 1 jam' : `Dalam ${diffHours} jam`;
   }
   if (diffDays === 1) {
-    return 'Tomorrow';
+    return 'Besok (1 hari)';
   }
-  return `In ${diffDays} days`;
+  if (diffDays === 2) {
+    return 'Lusa (2 hari)';
+  }
+  return `Dalam ${diffDays} hari`;
 }
-

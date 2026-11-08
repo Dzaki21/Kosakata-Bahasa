@@ -68,6 +68,21 @@ export async function initializeDatabase(): Promise<void> {
     }
   }
 
+  // Normalisasi interval lama jika ada kosakata dengan interval yang terlalu panjang
+  try {
+    const allVocab = await db.vocabularies.toArray();
+    for (const v of allVocab) {
+      if (v.id && v.interval > 7) {
+        await db.vocabularies.update(v.id, {
+          interval: Math.min(v.interval, 7),
+          repetitions: Math.min(v.repetitions || 1, 4),
+        });
+      }
+    }
+  } catch (e) {
+    console.error('Failed to normalize vocabulary intervals:', e);
+  }
+
   // Ensure default settings exist
   const existingSettings = await db.settings.get('current_settings');
   if (!existingSettings) {

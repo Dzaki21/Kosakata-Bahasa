@@ -272,10 +272,24 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     else if (rating === 3) goodCount++;
     else if (rating === 4) easyCount++;
 
+    // Jika Again (1): tampilkan lagi saat itu juga di sesi ini (re-queue ke akhir sesi)
+    const cards = [...state.cards];
+    if (rating === 1) {
+      cards.push({
+        vocab: {
+          ...vocab,
+          status: 'learning',
+          repetitions: 0,
+          interval: 0,
+        },
+        direction: currentCard.direction,
+      });
+    }
+
     const nextIndex = state.currentIndex + 1;
 
     // Check if session finished
-    if (nextIndex >= state.cards.length) {
+    if (nextIndex >= cards.length) {
       const durationSeconds = Math.round((Date.now() - state.sessionStartTime) / 1000);
 
       // Save completed study session
@@ -283,7 +297,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
         deckId: state.deckId,
         mode: state.mode,
         direction: state.directionPreference,
-        totalCards: state.cards.length,
+        totalCards: cards.length,
         correctCards: state.correctAnswersCount,
         againCount,
         hardCount,
@@ -299,6 +313,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
         isFinished: true,
         isActive: false,
         currentIndex: nextIndex,
+        cards,
         totalDurationSeconds: durationSeconds,
         againCount,
         hardCount,
@@ -307,6 +322,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
       });
     } else {
       set({
+        cards,
         currentIndex: nextIndex,
         userInput: '',
         isSubmitted: false,

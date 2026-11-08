@@ -1,6 +1,6 @@
 import React from 'react';
 import { Rating, Vocabulary } from '../../types';
-import { calculateNextReview, formatDueTime } from '../../services/srs';
+import { calculateNextReview } from '../../services/srs';
 
 interface RatingButtonsProps {
   vocab: Vocabulary;
@@ -19,8 +19,11 @@ export const RatingButtons: React.FC<RatingButtonsProps> = ({
   const goodEstimate = calculateNextReview(vocab, 3);
   const easyEstimate = calculateNextReview(vocab, 4);
 
-  const formatInterval = (days: number) => {
-    if (days <= 1) return '< 1 hari';
+  const formatIntervalLabel = (rating: 1 | 2 | 3 | 4, days: number) => {
+    if (rating === 1) return 'Saat ini juga';
+    if (rating === 2) return 'Selesai sesi';
+    if (days === 1) return '1 hari';
+    if (days === 2) return '2 hari';
     return `${days} hari`;
   };
 
@@ -45,8 +48,8 @@ export const RatingButtons: React.FC<RatingButtonsProps> = ({
             </span>
           </span>
           <span className="text-[11px] opacity-75 mt-0.5">Ulangi</span>
-          <span className="text-[10px] font-semibold text-red-600 dark:text-red-400 mt-1">
-            {formatInterval(againEstimate.interval)}
+          <span className="text-[10px] font-bold text-red-600 dark:text-red-400 mt-1">
+            {formatIntervalLabel(1, againEstimate.interval)}
           </span>
         </button>
 
@@ -64,8 +67,8 @@ export const RatingButtons: React.FC<RatingButtonsProps> = ({
             </span>
           </span>
           <span className="text-[11px] opacity-75 mt-0.5">Sulit</span>
-          <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 mt-1">
-            {formatInterval(hardEstimate.interval)}
+          <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-1">
+            {formatIntervalLabel(2, hardEstimate.interval)}
           </span>
         </button>
 
@@ -83,8 +86,8 @@ export const RatingButtons: React.FC<RatingButtonsProps> = ({
             </span>
           </span>
           <span className="text-[11px] opacity-75 mt-0.5">Bagus</span>
-          <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 mt-1">
-            {formatInterval(goodEstimate.interval)}
+          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 mt-1">
+            {formatIntervalLabel(3, goodEstimate.interval)}
           </span>
         </button>
 
@@ -102,12 +105,11 @@ export const RatingButtons: React.FC<RatingButtonsProps> = ({
             </span>
           </span>
           <span className="text-[11px] opacity-75 mt-0.5">Mudah</span>
-          <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
-            {formatInterval(easyEstimate.interval)}
+          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+            {formatIntervalLabel(4, easyEstimate.interval)}
           </span>
         </button>
       </div>
     </div>
   );
 };
-
