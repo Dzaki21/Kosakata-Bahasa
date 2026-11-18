@@ -3,8 +3,8 @@ import { db } from '../db';
 import { isVocabDue } from '../services/srs';
 
 export interface DailyActivityPoint {
-  date: string; // e.g. "05 Nov"
-  fullDate: string; // YYYY-MM-DD
+  date: string;
+  fullDate: string; 
   count: number;
   correct: number;
 }
@@ -96,6 +96,9 @@ export function useStats() {
     const todayKey = now.toISOString().split('T')[0];
     const todayReviews = dailyMap.get(todayKey)?.count || 0;
 
+    // Today's added vocabularies
+    const todayAddedVocab = vocabularies.filter(v => v.createdAt && v.createdAt.startsWith(todayKey)).length;
+
     // Calculate learning streak
     let streak = 0;
     const checkDate = new Date();
@@ -130,6 +133,7 @@ export function useStats() {
       statusDistribution,
       dailyActivity,
       todayReviews,
+      todayAddedVocab,
       streak,
     };
   }, []);

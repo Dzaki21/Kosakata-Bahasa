@@ -271,7 +271,7 @@ export const SettingsPage: React.FC = () => {
         {/* Daily Goal */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
-            Target Belajar Harian (Kartu per Hari)
+            Target Tambah Kosakata Baru Harian (Kata per Hari)
           </label>
           <div className="flex flex-wrap gap-2 mb-3">
             {[5, 10, 15, 20, 25, 30, 40, 50].map(target => (
@@ -285,7 +285,7 @@ export const SettingsPage: React.FC = () => {
                     : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
-                {target} Kata
+                +{target} Kata
               </button>
             ))}
           </div>
@@ -300,9 +300,12 @@ export const SettingsPage: React.FC = () => {
               className="flex-1 accent-brand-600"
             />
             <span className="text-sm font-bold text-slate-900 dark:text-white min-w-[70px]">
-              {settings.dailyGoal} kata
+              {settings.dailyGoal} kata baru
             </span>
           </div>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+            Target ini menghitung berapa banyak kosakata baru yang Anda tambahkan ke dalam deck setiap hari.
+          </p>
         </div>
       </div>
 

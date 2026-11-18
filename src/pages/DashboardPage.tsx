@@ -64,6 +64,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
     ratingDistribution,
     streak,
     todayReviews,
+    todayAddedVocab,
   } = stats;
 
   return (
@@ -119,7 +120,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
       </div>
 
-      {/* Target Kosakata Harian Card */}
+      {/* Target Tambah Kosakata Harian Card */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div className="flex items-center space-x-3">
@@ -128,22 +129,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
-                Target Kosakata Harian
-                {todayReviews >= settings.dailyGoal && (
+                Target Tambah Kosakata Harian
+                {todayAddedVocab >= settings.dailyGoal && (
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
                     Tercapai! 🎉
                   </span>
                 )}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Hari ini: <strong className="text-slate-900 dark:text-white font-semibold">{todayReviews}</strong> dari target <strong className="text-brand-600 dark:text-brand-400 font-semibold">{settings.dailyGoal} kata</strong> ({Math.min(100, Math.round((todayReviews / (settings.dailyGoal || 1)) * 100))}%)
+                Ditambahkan hari ini: <strong className="text-slate-900 dark:text-white font-semibold">{todayAddedVocab}</strong> dari target <strong className="text-brand-600 dark:text-brand-400 font-semibold">{settings.dailyGoal} kosakata baru</strong> ({Math.min(100, Math.round((todayAddedVocab / (settings.dailyGoal || 1)) * 100))}%)
               </p>
             </div>
           </div>
 
           {/* Quick Target Selector Pills */}
           <div className="flex items-center flex-wrap gap-1.5">
-            <span className="text-xs text-slate-400 mr-1 font-medium">Pilih target:</span>
+            <span className="text-xs text-slate-400 mr-1 font-medium">Target harian:</span>
             {[5, 10, 15, 20, 25, 30].map(target => (
               <button
                 key={target}
@@ -155,7 +156,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
-                {target}
+                +{target} Kata
               </button>
             ))}
           </div>
@@ -165,9 +166,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         <div className="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-500 rounded-full ${
-              todayReviews >= settings.dailyGoal ? 'bg-emerald-500' : 'bg-brand-500'
+              todayAddedVocab >= settings.dailyGoal ? 'bg-emerald-500' : 'bg-brand-500'
             }`}
-            style={{ width: `${Math.min(100, (todayReviews / (settings.dailyGoal || 1)) * 100)}%` }}
+            style={{ width: `${Math.min(100, (todayAddedVocab / (settings.dailyGoal || 1)) * 100)}%` }}
           />
         </div>
       </div>
