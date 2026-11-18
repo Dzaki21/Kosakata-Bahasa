@@ -30,11 +30,12 @@ export const PracticeSetupModal: React.FC<PracticeSetupModalProps> = ({
   const [direction, setDirection] = useState<ReviewDirection>('de-id');
 
   const countOptions = [
+    { label: '5 Kata', value: 5 },
     { label: '10 Kata', value: 10 },
+    { label: '15 Kata', value: 15 },
     { label: '20 Kata', value: 20 },
     { label: '50 Kata', value: 50 },
-    { label: '100 Kata', value: 100 },
-    { label: 'Semua Kata', value: 0 },
+    { label: 'Semua', value: 0 },
   ];
 
   const handleStart = () => {
@@ -121,7 +122,7 @@ export const PracticeSetupModal: React.FC<PracticeSetupModalProps> = ({
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
             Jumlah Kata Sesi Ini
           </label>
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
             {countOptions.map(opt => (
               <button
                 key={opt.value}

@@ -68,14 +68,14 @@ export async function initializeDatabase(): Promise<void> {
     }
   }
 
-  // Normalisasi interval lama jika ada kosakata dengan interval yang terlalu panjang
+  // Normalisasi interval kosakata lama agar sesuai: Good = 1 hari, Easy = 2 hari, Again/Hard = 0
   try {
     const allVocab = await db.vocabularies.toArray();
     for (const v of allVocab) {
-      if (v.id && v.interval > 7) {
+      if (v.id && v.interval > 2) {
         await db.vocabularies.update(v.id, {
-          interval: Math.min(v.interval, 7),
-          repetitions: Math.min(v.repetitions || 1, 4),
+          interval: 1,
+          repetitions: 1,
         });
       }
     }

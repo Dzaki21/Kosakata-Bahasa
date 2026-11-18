@@ -237,8 +237,12 @@ export const SettingsPage: React.FC = () => {
               onChange={e => updateSettings({ defaultPracticeCount: Number(e.target.value) })}
               className="w-full text-xs font-semibold py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none"
             >
+              <option value={5}>5 Kata per Sesi</option>
               <option value={10}>10 Kata per Sesi</option>
+              <option value={15}>15 Kata per Sesi</option>
               <option value={20}>20 Kata per Sesi</option>
+              <option value={25}>25 Kata per Sesi</option>
+              <option value={30}>30 Kata per Sesi</option>
               <option value={50}>50 Kata per Sesi</option>
               <option value={100}>100 Kata per Sesi</option>
               <option value={0}>Semua Kata Tersedia</option>
@@ -267,8 +271,24 @@ export const SettingsPage: React.FC = () => {
         {/* Daily Goal */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
-            Target Review Harian (Kartu per Hari)
+            Target Belajar Harian (Kartu per Hari)
           </label>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {[5, 10, 15, 20, 25, 30, 40, 50].map(target => (
+              <button
+                key={target}
+                type="button"
+                onClick={() => updateSettings({ dailyGoal: target })}
+                className={`py-1.5 px-3 text-xs font-bold rounded-xl border transition-all ${
+                  settings.dailyGoal === target
+                    ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 ring-2 ring-brand-500'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+              >
+                {target} Kata
+              </button>
+            ))}
+          </div>
           <div className="flex items-center space-x-3">
             <input
               type="range"

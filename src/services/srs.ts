@@ -48,39 +48,17 @@ export function calculateNextReview(vocab: Vocabulary, rating: Rating, now: Date
     // Jatuh tempo langsung sekarang (siap saat sesi ini selesai)
     dueDateObj = new Date(now.getTime());
   } else if (rating === 3) {
-    // Good: 1 hari untuk review awal, lalu meningkat bertahap teratur
+    // Good: diulang sehari sekali (1 hari)
     correctStreak += 1;
     repetitions += 1;
-
-    if (repetitions <= 1) {
-      interval = 1; // 1 hari persis sesuai permintaan
-    } else if (repetitions === 2) {
-      interval = 3;
-    } else if (repetitions === 3) {
-      interval = 5;
-    } else if (repetitions === 4) {
-      interval = 7;
-    } else {
-      interval = Math.min(21, 7 + (repetitions - 4) * 3);
-    }
-
-    dueDateObj = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+    interval = 1;
+    dueDateObj = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000);
   } else if (rating === 4) {
-    // Easy: 2 hari untuk review awal, lalu meningkat bertahap teratur
+    // Easy: diulang 2 hari sekali (2 hari)
     correctStreak += 1;
     repetitions += 1;
-
-    if (repetitions <= 1) {
-      interval = 2; // 2 hari persis sesuai permintaan
-    } else if (repetitions === 2) {
-      interval = 4;
-    } else if (repetitions === 3) {
-      interval = 7;
-    } else {
-      interval = Math.min(28, 7 + (repetitions - 3) * 5);
-    }
-
-    dueDateObj = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+    interval = 2;
+    dueDateObj = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
   } else {
     dueDateObj = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   }

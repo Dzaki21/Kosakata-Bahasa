@@ -17,6 +17,8 @@ import { useStats } from '../hooks/useStats';
 import { useDecks } from '../hooks/useDecks';
 import { PracticeSetupModal } from '../components/review/PracticeSetupModal';
 import { ReviewDirection } from '../types';
+import { useSettingsStore } from '../store/useSettingsStore';
+import { Target } from 'lucide-react';
 
 interface DashboardPageProps {
   onNavigateToDecks: () => void;
@@ -38,6 +40,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 }) => {
   const { stats, isLoading: isStatsLoading } = useStats();
   const { decks } = useDecks();
+  const { settings, updateSettings } = useSettingsStore();
   const [isPracticeModalOpen, setIsPracticeModalOpen] = useState(false);
 
   if (isStatsLoading || !stats) {
@@ -114,6 +117,59 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
         {/* Decorative circle glow */}
         <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+      </div>
+
+      {/* Target Kosakata Harian Card */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 border border-brand-200/60 dark:border-brand-800 flex items-center justify-center">
+              <Target className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                Target Kosakata Harian
+                {todayReviews >= settings.dailyGoal && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                    Tercapai! 🎉
+                  </span>
+                )}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Hari ini: <strong className="text-slate-900 dark:text-white font-semibold">{todayReviews}</strong> dari target <strong className="text-brand-600 dark:text-brand-400 font-semibold">{settings.dailyGoal} kata</strong> ({Math.min(100, Math.round((todayReviews / (settings.dailyGoal || 1)) * 100))}%)
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Target Selector Pills */}
+          <div className="flex items-center flex-wrap gap-1.5">
+            <span className="text-xs text-slate-400 mr-1 font-medium">Pilih target:</span>
+            {[5, 10, 15, 20, 25, 30].map(target => (
+              <button
+                key={target}
+                type="button"
+                onClick={() => updateSettings({ dailyGoal: target })}
+                className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition-all ${
+                  settings.dailyGoal === target
+                    ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 ring-1 ring-brand-500'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+              >
+                {target}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Target Progress Bar */}
+        <div className="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-500 rounded-full ${
+              todayReviews >= settings.dailyGoal ? 'bg-emerald-500' : 'bg-brand-500'
+            }`}
+            style={{ width: `${Math.min(100, (todayReviews / (settings.dailyGoal || 1)) * 100)}%` }}
+          />
+        </div>
       </div>
 
       {/* 4 Quick Stat Cards */}
