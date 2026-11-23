@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
 import { NavItem } from './components/layout/Sidebar';
 import { DashboardPage } from './pages/DashboardPage';
+import { VocabularyListPage } from './pages/VocabularyListPage';
 import { DecksPage } from './pages/DecksPage';
 import { ReviewPage } from './pages/ReviewPage';
 import { StatisticsPage } from './pages/StatisticsPage';
@@ -85,6 +86,13 @@ export const App: React.FC = () => {
           onNavigateToDeckDetail={handleNavigateToDeckDetail}
           onStartReview={handleStartReview}
           onStartPractice={handleStartPractice}
+        />
+      )}
+
+      {currentTab === 'vocab-list' && (
+        <VocabularyListPage
+          onStartReview={handleStartReview}
+          onNavigateToDeckDetail={handleNavigateToDeckDetail}
         />
       )}
 

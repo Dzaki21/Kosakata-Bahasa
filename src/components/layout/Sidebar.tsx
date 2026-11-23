@@ -2,6 +2,7 @@ import React from 'react';
 import {
   LayoutDashboard,
   Layers,
+  BookOpen,
   Sparkles,
   BarChart3,
   Settings,
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useSettingsStore } from '../../store/useSettingsStore';
 
-export type NavItem = 'dashboard' | 'decks' | 'review' | 'statistics' | 'settings';
+export type NavItem = 'dashboard' | 'vocab-list' | 'decks' | 'review' | 'statistics' | 'settings';
 
 interface SidebarProps {
   currentTab: NavItem;
@@ -34,6 +35,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'dashboard' as NavItem,
       label: 'Dashboard',
       icon: LayoutDashboard,
+    },
+    {
+      id: 'vocab-list' as NavItem,
+      label: 'List Kosakata',
+      icon: BookOpen,
     },
     {
       id: 'decks' as NavItem,

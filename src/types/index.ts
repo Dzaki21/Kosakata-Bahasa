@@ -71,6 +71,20 @@ export interface StudySession {
   completedAt: string;
 }
 
+export interface DraftVocab {
+  id?: number;
+  word: string;
+  article: GermanArticle;
+  plural?: string;
+  indonesian: string;
+  exampleGerman?: string;
+  exampleIndonesian?: string;
+  notes?: string;
+  isMemorized?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppSettings {
   id: string; // 'current_settings'
   theme: 'light' | 'dark' | 'system';

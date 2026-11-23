@@ -23,6 +23,10 @@ export const Header: React.FC<HeaderProps> = ({
       title: 'Dashboard Pembelajaran',
       subtitle: 'Pantau kemajuan kosakata dan jadwal pengulangan berjarak (SRS)',
     },
+    'vocab-list': {
+      title: 'List Kosakata yang Mau Dihafalkan',
+      subtitle: 'Tabel kosakata lengkap terbagi antara Nomen (berartikel & plural) dan non-Nomen',
+    },
     decks: {
       title: 'My Decks (Koleksi Deck)',
       subtitle: 'Kelola deck kosakata Jerman, tingkat kesulitan, dan kategori topik',

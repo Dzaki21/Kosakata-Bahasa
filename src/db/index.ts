@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import { AppSettings, Deck, ReviewLog, StudySession, Vocabulary } from '../types';
+import { AppSettings, Deck, ReviewLog, StudySession, Vocabulary, DraftVocab } from '../types';
 import { INITIAL_DECKS, INITIAL_VOCABULARY } from './seedData';
 
 export class KosaktaDatabase extends Dexie {
@@ -7,17 +7,19 @@ export class KosaktaDatabase extends Dexie {
   vocabularies!: Table<Vocabulary, number>;
   reviewLogs!: Table<ReviewLog, number>;
   studySessions!: Table<StudySession, number>;
+  draftVocabs!: Table<DraftVocab, number>;
   settings!: Table<AppSettings, string>;
 
   constructor() {
     super('KosaktaGermanDB');
 
     // Schema definition with indexes
-    this.version(1).stores({
+    this.version(2).stores({
       decks: '++id, name, createdAt, updatedAt',
       vocabularies: '++id, deckId, word, article, indonesian, status, dueDate, repetitions, interval, easeFactor, createdAt, updatedAt',
       reviewLogs: '++id, vocabId, deckId, rating, isCorrect, reviewedAt',
       studySessions: '++id, deckId, mode, startedAt, completedAt',
+      draftVocabs: '++id, word, article, indonesian, isMemorized, createdAt, updatedAt',
       settings: 'id',
     });
   }
@@ -105,10 +107,11 @@ export async function initializeDatabase(): Promise<void> {
  * Resets the entire database to a completely clean/empty state.
  */
 export async function resetDatabase(): Promise<void> {
-  await db.transaction('rw', [db.decks, db.vocabularies, db.reviewLogs, db.studySessions], async () => {
+  await db.transaction('rw', [db.decks, db.vocabularies, db.reviewLogs, db.studySessions, db.draftVocabs], async () => {
     await db.decks.clear();
     await db.vocabularies.clear();
     await db.reviewLogs.clear();
     await db.studySessions.clear();
+    await db.draftVocabs.clear();
   });
 }
