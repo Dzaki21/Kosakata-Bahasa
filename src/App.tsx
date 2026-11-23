@@ -34,8 +34,13 @@ export const App: React.FC = () => {
     boot();
   }, [loadSettings]);
 
+  const handleNavigateToDecks = () => {
+    setSelectedDeckId(null);
+    setCurrentTab('decks');
+  };
+
   const handleStartReview = async (deckId?: number) => {
-    const res = await startReviewSession(deckId);
+    await startReviewSession(deckId);
     setCurrentTab('review');
   };
 
@@ -69,7 +74,6 @@ export const App: React.FC = () => {
     <AppLayout
       currentTab={currentTab}
       onSelectTab={tab => {
-        // If navigating directly to decks from sidebar, keep or reset selected deck
         if (tab !== 'decks') {
           setSelectedDeckId(null);
         }
@@ -79,10 +83,7 @@ export const App: React.FC = () => {
     >
       {currentTab === 'dashboard' && (
         <DashboardPage
-          onNavigateToDecks={() => {
-            setSelectedDeckId(null);
-            setCurrentTab('decks');
-          }}
+          onNavigateToDecks={handleNavigateToDecks}
           onNavigateToDeckDetail={handleNavigateToDeckDetail}
           onStartReview={handleStartReview}
           onStartPractice={handleStartPractice}
@@ -90,10 +91,7 @@ export const App: React.FC = () => {
       )}
 
       {currentTab === 'vocab-list' && (
-        <VocabularyListPage
-          onStartReview={handleStartReview}
-          onNavigateToDeckDetail={handleNavigateToDeckDetail}
-        />
+        <VocabularyListPage onNavigateToDecks={handleNavigateToDecks} />
       )}
 
       {currentTab === 'decks' && (
@@ -120,4 +118,3 @@ export const App: React.FC = () => {
 };
 
 export default App;
-

@@ -5,14 +5,12 @@ import {
   Volume2,
   Trash2,
   Edit2,
-  Sparkles,
   CheckCircle2,
   Layers,
   ArrowRight,
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  HelpCircle,
 } from 'lucide-react';
 import { DraftVocab, GermanArticle } from '../types';
 import { useDraftVocabs } from '../hooks/useDraftVocabs';
@@ -26,8 +24,7 @@ type CategoryTab = 'all' | 'nomen' | 'non-nomen';
 
 export const VocabularyListPage: React.FC<{
   onNavigateToDecks: () => void;
-  onNavigateToDeckDetail: (deckId: number) => void;
-}> = ({ onNavigateToDecks, onNavigateToDeckDetail }) => {
+}> = ({ onNavigateToDecks }) => {
   const {
     draftVocabs,
     isLoading,
