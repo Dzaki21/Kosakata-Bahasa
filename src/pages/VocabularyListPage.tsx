@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   Plus,
   Search,
@@ -56,6 +56,35 @@ export const VocabularyListPage: React.FC<{
   const [exampleGerman, setExampleGerman] = useState('');
   const [exampleIndonesian, setExampleIndonesian] = useState('');
   const [notes, setNotes] = useState('');
+
+  // Active focused input ref for German character inserter
+  const lastActiveInputRef = useRef<'word' | 'plural' | 'notes' | 'indonesian' | 'exampleGerman' | 'exampleIndonesian'>('word');
+
+  const handleInsertChar = (char: string) => {
+    switch (lastActiveInputRef.current) {
+      case 'word':
+        setWord(prev => prev + char);
+        break;
+      case 'plural':
+        setPlural(prev => prev + char);
+        break;
+      case 'notes':
+        setNotes(prev => prev + char);
+        break;
+      case 'indonesian':
+        setIndonesian(prev => prev + char);
+        break;
+      case 'exampleGerman':
+        setExampleGerman(prev => prev + char);
+        break;
+      case 'exampleIndonesian':
+        setExampleIndonesian(prev => prev + char);
+        break;
+      default:
+        setWord(prev => prev + char);
+        break;
+    }
+  };
 
   // Move to deck modal state
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
@@ -562,7 +591,7 @@ export const VocabularyListPage: React.FC<{
         <form onSubmit={handleSaveDraft} className="space-y-4">
           {/* German Characters Toolbar */}
           <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
-            <GermanSpecialChars onInsert={char => setWord(prev => prev + char)} />
+            <GermanSpecialChars onInsert={handleInsertChar} />
           </div>
 
           {/* Category Switcher: Nomen (Benda) vs Non-Nomen */}
@@ -654,6 +683,7 @@ export const VocabularyListPage: React.FC<{
                   type="text"
                   required
                   value={word}
+                  onFocus={() => { lastActiveInputRef.current = 'word'; }}
                   onChange={e => setWord(e.target.value)}
                   placeholder={formCategory === 'nomen' ? 'misal: Haus, Tisch, Apfel...' : 'misal: lernen, schön, danke...'}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
@@ -679,6 +709,7 @@ export const VocabularyListPage: React.FC<{
                 <input
                   type="text"
                   value={plural}
+                  onFocus={() => { lastActiveInputRef.current = 'plural'; }}
                   onChange={e => setPlural(e.target.value)}
                   placeholder="misal: Häuser, Tische, Äpfel..."
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -692,6 +723,7 @@ export const VocabularyListPage: React.FC<{
                 <input
                   type="text"
                   value={notes}
+                  onFocus={() => { lastActiveInputRef.current = 'notes'; }}
                   onChange={e => setNotes(e.target.value)}
                   placeholder="misal: Verb, Adjektiv, Redewendung..."
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -709,6 +741,7 @@ export const VocabularyListPage: React.FC<{
               type="text"
               required
               value={indonesian}
+              onFocus={() => { lastActiveInputRef.current = 'indonesian'; }}
               onChange={e => setIndonesian(e.target.value)}
               placeholder="misal: rumah, meja, belajar..."
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold"
@@ -723,6 +756,7 @@ export const VocabularyListPage: React.FC<{
             <input
               type="text"
               value={exampleGerman}
+              onFocus={() => { lastActiveInputRef.current = 'exampleGerman'; }}
               onChange={e => setExampleGerman(e.target.value)}
               placeholder="Jerman: Das Haus ist sehr groß."
               className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -730,6 +764,7 @@ export const VocabularyListPage: React.FC<{
             <input
               type="text"
               value={exampleIndonesian}
+              onFocus={() => { lastActiveInputRef.current = 'exampleIndonesian'; }}
               onChange={e => setExampleIndonesian(e.target.value)}
               placeholder="Terjemahan: Rumah itu sangat besar."
               className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"

@@ -17,6 +17,10 @@ export const GermanSpecialChars: React.FC<GermanSpecialCharsProps> = ({ onInsert
         <button
           key={char}
           type="button"
+          onMouseDown={e => {
+            // Prevent button from stealing focus from currently focused input
+            e.preventDefault();
+          }}
           onClick={() => onInsert(char)}
           title={`Sisipkan ${char}`}
           className="w-7 h-7 inline-flex items-center justify-center text-xs font-semibold rounded bg-slate-100 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-300 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors shadow-sm active:scale-95"
